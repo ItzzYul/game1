@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VocabVenture</title>
+  <style>
+    body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: url('Backgrounds/background1.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #ede7f6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  padding: 20px;
+  text-align: center;
+  width: 100%;
+  background: rgba(60, 30, 90, 0.38);
+  box-shadow: 0 2px 16px rgba(76,0,130,0.18);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border-bottom: 1.5px solid rgba(124,77,255,0.25);
+  border-radius: 0 0 24px 24px;
+  color: #fff;
+  position: relative;
+}
+#hintBtn {
+  position: absolute;
+  top: 15px;
+  right: 32px;
+  font-size: 18px;
+  background: #7c4dff;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 24px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(124,77,255,0.15);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+#hintBtn:hover {
+  background: #9575cd;
+  box-shadow: 0 4px 16px rgba(124,77,255,0.25);
+}
+    h2 {
+      margin: 0;
+    }
+
+    .controls {
+      margin: 10px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .chat-wrapper {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      width: 90%;
+      max-width: 900px;
+      margin-top: 20px;
+    }
+
+    .chibi-character {
+      padding-right: -200px;
+  width: 220px;
+  max-width: 40vw;
+  height: auto;
+  margin-right: 24px;
+  margin-left: -200px; /* Shift a bit more to the left */
+  margin-bottom: -300px;
+  image-rendering: crisp-edges;
+  display: block;
+  position: relative;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.word-display {
+  font-size: 2.7em;
+  margin: 30px auto 20px auto;
+  letter-spacing: 18px;
+  word-spacing: 24px;
+  word-wrap: break-word;
+  text-align: center;
+  max-width: 90vw;
+  padding: 18px 32px;
+  background: rgba(255,255,255,0.13);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(124,77,255,0.10);
+  color: #fff;
+  font-weight: bold;
+  border: 2px solid #7c4dff;
+  text-shadow: 0 2px 8px #000000, 0 1px 0 #b3c6ff;
+  transition: background 0.3s, box-shadow 0.3s;
+  font-size: 2.5em;
+  margin: 20px 0;
+  letter-spacing: 10px;
+  word-wrap: break-word;
+  text-align: center;
+  max-width: 100%;
+}
+.word-display:empty {
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+    .chat-window {
+      flex-grow: 1;
+      height: 150px;
+      background: rgba(30, 20, 60, 0.92);
+  color: #b3c6ff;
+      font-family: 'Courier New', monospace;
+      border: 2px solid #7c4dff;
+  border-radius: 10px;
+      padding: 15px;
+      overflow-y: auto;
+      box-shadow: 0 0 10px rgba(124,77,255,0.12);
+    }
+
+    .chat-line {
+      margin-bottom: 8px;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .vocab-card {
+  margin-top: 10px;
+  padding: 10px;
+  border-left: 4px solid #7c4dff;
+  background: #111;
+  color:  #ede7f6;
+  font-family: 'Segoe UI', sans-serif;
+  border-radius: 6px;
+  animation: fadeIn 0.5s ease-in;
+  background: rgba(76,0,130,0.12);
+}
+
+.vocab-card strong {
+  color: #7c4dff;
+  font-size: 16px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+    .keyboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 800px;
+    }
+
+    .keyboard button {
+      margin: 8px;
+      padding: 0;
+      font-size: 30px;
+      cursor: pointer;
+      width: 55px;
+      height: 55px;
+      border-radius: 8px;
+        background-color: #ede7f6;
+  border: 1px solid #7c4dff;
+  color: #4a148c;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+  .keyboard button:hover:not(:disabled) {
+  background-color: #b3c6ff;
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(124,77,255,0.18);
+}
+.keyboard button:active:not(:disabled) {
+  background-color: #9575cd;
+}
+.keyboard button[style*="background-color: #c8e6c9"] {
+  background-color: #81c784 !important;
+}
+.keyboard button[style*="background-color: #ffcdd2"] {
+  background-color: #e57373 !important;
+}
+
+    .popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255,255,255,0.97);
+  color: #4a148c;
+  padding: 30px;
+  box-shadow: 0 4px 24px rgba(124,77,255,0.18);
+  display: none;
+  z-index: 10;
+  text-align: center;
+  border-radius: 10px;
+  min-width: 250px;
+  border: 2px solid #7c4dff;
+}
+
+
+    .popup.show {
+      display: block;
+    }
+
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 5;
+    }
+
+    #overlay.show {
+      display: block;
+    }
+
+    .slider-label {
+      font-size: 14px;
+    }
+
+    .volume-controls input {
+      width: 100px;
+    }
+
+    .difficulty-select {
+      font-size: 14px;
+      padding: 5px 10px;
+    }
+
+    #vocabBookBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #7c4dff;
+  color: #fff;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  box-shadow: 0 4px 10px rgba(124,77,255,0.3);
+  cursor: pointer;
+  z-index: 11;
+}
+
+#vocabBookBtn:hover {
+  background-color: #9575cd;
+}
+
+#vocabModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(30, 20, 60, 0.92);
+  color: #ede7f6;
+  padding: 20px;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 10px;
+  display: none;
+  z-index: 15;
+  box-shadow: 0 0 20px rgba(124,77,255,0.3);
+}
+
+#vocabModal.show {
+  display: block;
+}
+
+.vocab-entry {
+  border-left: 4px solid #7c4dff;
+  background: rgba(76,0,130,0.12);
+  color: #ede7f6;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+
+.vocab-entry strong {
+  color: #7c4dff;
+  font-size: 15px;
+  display: block;
+  margin-bottom: 4px;
+}
+#popup #closePopup {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+}
+
+#popup #closePopup:hover {
+  color: #f00;
+}
+#popup #closePopup {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+}
+
+#popup #closePopup:hover {
+  color: #f00;
+}
+
+.post-popup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.post-popup-buttons button {
+  width: 160px; /* Force same fixed width */
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f0f0f0;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s ease;
+}
+
+.post-popup-buttons button:hover {
+  background: #e0e0e0;
+}
+
+    /* Hamburger menu button */
+    #menuBtn {
+      position: fixed;
+      top: 15px;
+      left: 18px;
+      z-index: 100;
+      background: none;
+      border: none;
+      font-size: 32px;
+      cursor: pointer;
+      color: #333;
+      transition: color 0.2s;
+    }
+    #menuBtn:hover {
+      color: #7c4dff;
+    }
+
+    /* Sliding menu styles */
+    #sideMenu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100%;
+      background: rgba(60, 30, 90, 0.95);
+      color: #ede7f6;
+      box-shadow: 2px 0 12px rgba(76,0,130,0.18);
+      z-index: 200;
+      padding: 30px 20px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      transform: translateX(-100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.25s;
+    }
+    #sideMenu.open {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #sideMenu h3 {
+      margin-top: 0;
+      color: #ede7f6;
+      font-size: 22px;
+      margin-bottom: 18px;
+    }
+    #closeMenuBtn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: #7c4dff;
+      font-size: 26px;
+      cursor: pointer;
+    }
+    #closeMenuBtn:hover {
+      color: #f00;
+    }
+    .menu-control-group {
+      margin-bottom: 18px;
+    }
+    .menu-control-group label {
+      color: #b3c6ff;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .menu-control-group input[type="range"] {
+      width: 100%;
+      accent-color: #7c4dff;
+    }
+    .menu-control-group select {
+      width: 100%;
+      font-size: 15px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #7c4dff;
+      background: #ede7f6;
+      color: #4a148c;
+    }
+    /* Optional: darken overlay when menu is open */
+    #menuOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.25);
+      z-index: 150;
+      transition: opacity 0.3s;
+    }
+    #menuOverlay.show {
+      display: block;
+    }
+    /* Hide original controls in header */
+    .controls {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Hamburger menu button -->
+  <button id="menuBtn" aria-label="Open menu">☰</button>
+  <!-- Sliding menu -->
+  <div id="sideMenu">
+    <button id="closeMenuBtn" aria-label="Close menu">✖</button>
+    <h3>Settings</h3>
+    <div class="menu-control-group">
+      <label for="musicVolumeMenu">Music Volume</label>
+      <input type="range" id="musicVolumeMenu" min="0" max="1" step="0.01" value="0.3">
+    </div>
+    <div class="menu-control-group">
+      <label for="sfxVolumeMenu">SFX Volume</label>
+      <input type="range" id="sfxVolumeMenu" min="0" max="1" step="0.01" value="0.5">
+    </div>
+    <div class="menu-control-group">
+      <label for="difficultyMenu">Difficulty</label>
+      <select id="difficultyMenu">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+  </div>
+  <div id="menuOverlay"></div>
+
+  <header>
+    <h2 id="category">Category: </h2>
+    <div class="controls">
+      <button id="hintBtn" onclick="giveHint()">💡 Hint</button>
+      <label class="slider-label">Music Vol:
+        <input type="range" id="musicVolume" min="0" max="1" step="0.01" value="0.3">
+      </label>
+      <label class="slider-label">SFX Vol:
+        <input type="range" id="sfxVolume" min="0" max="1" step="0.01" value="0.5">
+      </label>
+      <label>
+        Difficulty:
+        <select id="difficulty" class="difficulty-select" onchange="startGame()">
+          <option value="easy" selected>Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <div class="chat-wrapper">
+    <img src="chibi.png" alt="Chibi Guide" class="chibi-character">
+    <div class="chat-window" id="chatWindow"></div>
+  </div>
+  <div class="post-popup-buttons" id="postPopupButtons" style="display: none; margin: 15px;">
+  <button onclick="startGame()">Next Word</button>
+  <button onclick="saveCurrentVocab()"> Save to Book</button>
+  <button id="tryAgainBtn" onclick="tryAgain()" style="display:none;">Try Again</button>
+</div>
+  <button id="hintBtn" onclick="giveHint()">💡 Hint</button>
+  <div class="word-display" id="wordDisplay">_ _ _</div>
+  <div class="keyboard" id="keyboard"></div>
+
+  <div id="overlay"></div>
+  <div class="popup" id="popup">
+  <button id="closePopup" onclick="hidePopup()">❌</button>
+  <p id="popupMessage"></p>
+  
+
+</div>
+
+
+  <button id="vocabBookBtn" onclick="toggleVocabBook()">📘 Vocab Book</button>
+
+<div id="vocabModal">
+  <h3>Your Vocab Book</h3>
+  <div id="vocabList"></div>
+</div>
+
+
+  <!-- Sounds -->
+  <audio id="correctSound" src="music/correct.mp3"></audio>
+  <audio id="wrongSound" src="music/wrong.mp3"></audio>
+  <audio id="winSound" src="music/win.mp3"></audio>
+  <audio id="loseSound" src="music/lose.mp3"></audio>
+  <audio id="bgMusic" src="music/bg.mp3" loop></audio>
+
+  <script>
+    const chatWindow = document.getElementById('chatWindow');
+    const wordDisplay = document.getElementById('wordDisplay');
+    const keyboard = document.getElementById('keyboard');
+    const categoryLabel = document.getElementById('category');
+    const popup = document.getElementById('popup');
+    const popupMessage = document.getElementById('popupMessage');
+    const overlay = document.getElementById('overlay');
+    const bgMusic = document.getElementById('bgMusic');
+
+    const correctSound = document.getElementById('correctSound');
+    const wrongSound = document.getElementById('wrongSound');
+    const winSound = document.getElementById('winSound');
+    const loseSound = document.getElementById('loseSound');
+
+    const musicVolumeSlider = document.getElementById('musicVolume');
+    const sfxVolumeSlider = document.getElementById('sfxVolume');
+    const difficultySelect = document.getElementById('difficulty');
+
+    const questions = {
+      easy: {
+        "What is the opposite of small?": ["BIG"],
+        "What is another word for joyful?": ["HAPPY"],
+        "What is the opposite of warm?": ["COLD"],
+        "Moving quickly means ____": ["FAST"],
+        "To ___ is to move quickly with your feet": ["RUN"],
+        "What is the opposite of laugh?": ["CRY"],
+        "What is another word for very high?": ["TALL"],
+        "What is something to read?": ["BOOK"],
+        "What is a tool for writing?": ["PENCIL"],
+        "What is a person who teaches?": ["TEACHER"],
+      },
+      medium: {
+        "Mia felt pr__d after finishing her drawing": ["PROUD"],
+        "The kitten was very ge___e when it touched the toy": ["GENTLE"],
+        "I was c_ri__s about what was inside the box": ["CURIOUS"],
+        "It was hard to see in the f___y morning": ["FOGGY"],
+        "A bright star was s_in_g": ["SHINING"],
+        "The butterfly's wings are very d_l__c__e": ["DELICATE"],
+        "The sh__p pencil made writing easy": ["SHARP"],
+        "A m_un___n is taller than a hill": ["MOUNTAIN"],
+        "A s___m brings heavy rain": ["STORM"],
+        "We plant s___s to grow flowers": ["SEEDS"],
+      },
+      hard: {
+        "The rabbit was very al__t when it heard a noise": ["ALERT"],
+        "The magician's trick was so con_f___g": ["CONFUSING"],
+        "We had to p___p__e the game because of rain": ["POSTPONE"],
+        "The mouse was too t___d to leave its hole": ["TIMID"],
+        "The tiger is a f_e__e animal": ["FIERCE"],
+        "The baby g___d at the mobile above the crib": ["GAZED"],
+        "The room became g___my after the lights turned off": ["GLOOMY"],
+        "Our teacher told us to ob____e the experiment": ["OBSERVE"],
+        "The a____r of the book signed my copy": ["AUTHOR"],
+        "We made a pr_d__t__n about the weather": ["PREDICTION"],
+      }
+    };
+
+    const definitions = {
+  "BIG": "Large in size or extent.",
+  "HAPPY": "Feeling or showing pleasure or contentment.",
+  "COLD": "Low in temperature.",
+  "FAST": "Moving or capable of moving at high speed.",
+  "RUN": "To move quickly on foot.",
+  "CRY": "To shed tears as a result of emotion.",
+  "TALL": "Another term for a tall person or object.",
+  "BOOK": "A set of written or printed pages, usually bound with a protective cover.",
+  "PENCIL": "A tool for writing or drawing.",
+  "TEACHER": "A person who teaches, especially in a school.",
+  "PROUD": "Feeling deep pleasure or satisfaction as a result of one's own achievements.",
+  "GENTLE": "Having a mild and kind temperament.",
+  "CURIOUS": "Eager to know or learn something.",
+  "FOGGY": "Filled with fog; not clear.",
+  "SHINING": "Emitting or reflecting light; bright.",
+  "DELICATE": "Easily broken or damaged; fragile.",
+  "SHARP": "Having a fine edge or point; able to cut or pierce.",
+  "MOUNTAIN": "A large natural elevation of the earth's surface.",
+  "STORM": "A violent disturbance of the atmosphere with strong winds and usually rain, thunder, lightning, or snow.",
+  "SEEDS": "Small, embryonic plants enclosed in a protective outer covering.",
+  "ALERT": "A state of being watchful for possible danger.",
+  "CONFUSING": "Causing confusion; unclear.",
+  "POSTPONE": "To delay or defer an action.",
+  "TIMID": "Showing a lack of courage or confidence; easily frightened.",
+  "FIERCE": "Having or displaying an intense or ferocious aggressiveness.",
+  "GAZED": "To look steadily and intently, especially in admiration or wonder.",
+  "GLOOMY": "Dark or poorly lit, especially in a way that causes a feeling of sadness.",
+  "OBSERVE": "To watch carefully, especially with attention to details.",
+  "AUTHOR": "A person who writes books or other texts.",
+  "PREDICTION": "A statement about what will happen in the future."
+};
+
+    let currentQuestion = "";
+    let selectedWord = "";
+    let guessedLetters = new Set();
+    let incorrectGuesses = 0;
+    let usedQuestions = [];
+    const maxIncorrect = 6;
+    let gameOver = false;
+
+    const savedVocab = [];
+
+
+    musicVolumeSlider.oninput = () => {
+      bgMusic.volume = musicVolumeSlider.value;
+    };
+    sfxVolumeSlider.oninput = () => {
+      const vol = sfxVolumeSlider.value;
+      [correctSound, wrongSound, winSound, loseSound].forEach(a => a.volume = vol);
+    };
+
+    const chatQueue = [];
+let typing = false;
+
+function addChatMessage(message) {
+  chatQueue.push(message);
+  if (!typing) processNextChat();
+}
+
+function processNextChat() {
+  if (chatQueue.length === 0) {
+    typing = false;
+    return;
+  }
+
+  typing = true;
+  const message = chatQueue.shift();
+  const chatWindow = document.getElementById("chatWindow");
+
+  // Clear previous message
+  chatWindow.innerHTML = "";
+  const line = document.createElement("div");
+  line.className = "chat-line";
+  chatWindow.appendChild(line);
+
+  let i = 0;
+  const speed = 35; // typing speed in ms
+
+  const interval = setInterval(() => {
+    line.textContent += message.charAt(i);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+    i++;
+    if (i >= message.length) {
+      clearInterval(interval);
+      setTimeout(() => {
+        typing = false;
+        processNextChat();
+      }, 300); // slight pause before next message
+    }
+  }, speed);
+}
+
+
+    function updateWordDisplay() {
+      wordDisplay.textContent = [...selectedWord].map(ch =>
+        ch === " " ? "  " : (guessedLetters.has(ch) ? ch : "_")).join(" ");
+    }
+
+    function letterPressed(letter, button) {
+      if (gameOver) return;
+      button.disabled = true;
+
+      if (selectedWord.includes(letter)) {
+        guessedLetters.add(letter);
+        button.style.backgroundColor = "#c8e6c9";
+        updateWordDisplay();
+
+        const allGuessed = [...selectedWord].every(ch => ch === " " || guessedLetters.has(ch));
+        if (allGuessed) {
+  gameOver = true;
+  winSound.play();
+  const definition = definitions[selectedWord] || "Definition not found.";
+  addChatMessage("Great job!");
+  showVocabCard(selectedWord, definition);
+  showPopup(`🎉 Correct! The word was: ${selectedWord}`);
+}
+
+        else {
+          correctSound.currentTime = 0;
+correctSound.play();
+
+        }
+      } else {
+        incorrectGuesses++;
+        button.style.backgroundColor = "#ffcdd2";
+
+        if (incorrectGuesses >= maxIncorrect) {
+          gameOver = true;
+          loseSound.play();
+          addChatMessage("💀 The word defeats you!");
+          showPopup(`💀 Game Over! The word was: ${selectedWord}`);
+        } else {
+          wrongSound.currentTime = 0;
+wrongSound.play();
+          const taunts = [
+            "❗ That's not it, brave one.",
+            "⚔️ The word resists your attempt.",
+            "🕯️ A shadow grows darker...",
+            "💢 The silence deepens with your mistake.",
+            "⚠️ Another misstep. Tread carefully.",
+            "☠️ Doom approaches..."
+          ];
+          addChatMessage(taunts[Math.min(incorrectGuesses - 1, taunts.length - 1)]);
+        }
+      }
+    }
+
+    function buildKeyboard() {
+      keyboard.innerHTML = "";
+      for (let code = 65; code <= 90; code++) {
+        const letter = String.fromCharCode(code);
+        const btn = document.createElement('button');
+        btn.textContent = letter;
+        btn.onclick = () => letterPressed(letter, btn);
+        keyboard.appendChild(btn);
+      }
+    }
+
+    function showPopup(message, definition = "") {
+  popupMessage.innerHTML = `<strong>${message}</strong>`;
+  if (definition) {
+    popupMessage.innerHTML += `<br><em>${definition}</em>`;
+  }
+  popup.classList.add("show");
+  overlay.classList.add("show");
+
+  // Show Try Again button only if lost, hide Next Word
+  const tryAgainBtn = document.getElementById("tryAgainBtn");
+  const nextWordBtn = document.querySelector('#postPopupButtons button[onclick="startGame()"]');
+  if (message.includes("Game Over")) {
+    tryAgainBtn.style.display = "inline-block";
+    if (nextWordBtn) nextWordBtn.style.display = "none";
+  } else {
+    tryAgainBtn.style.display = "none";
+    if (nextWordBtn) nextWordBtn.style.display = "inline-block";
+  }
+}
+
+function hidePopup() {
+  popup.classList.remove("show");
+  overlay.classList.remove("show");
+
+  // Show post-popup buttons if game ended
+  if (gameOver) {
+    document.getElementById("postPopupButtons").style.display = "block";
+  }
+}
+function saveCurrentVocab() {
+  if (!currentWord || !currentDefinition) {
+    alert("⚠️ No word to save!");
+    return;
+  }
+
+  saveVocab(currentWord, currentDefinition);
+}
+
+
+function saveToBook() {
+  if (!definitions[selectedWord] || !gameOver) return;
+
+  const vocabList = document.getElementById("vocabList");
+  const saved = JSON.parse(localStorage.getItem("vocabBook")) || [];
+
+  // Check if the word already exists (case-insensitive match)
+  if (saved.some(entry => entry.word.toUpperCase() === selectedWord.toUpperCase())) {
+    alert(`"${selectedWord}" is already in your Vocab Book!`);
+    return;
+  }
+
+  // Save to DOM
+  const entry = document.createElement("div");
+  entry.className = "vocab-entry";
+  entry.dataset.word = selectedWord;
+  entry.innerHTML = `<strong>${selectedWord}</strong>${definitions[selectedWord]}`;
+  vocabList.appendChild(entry);
+
+  // Save to localStorage
+  saved.push({ word: selectedWord, definition: definitions[selectedWord] });
+  localStorage.setItem("vocabBook", JSON.stringify(saved));
+
+  alert(`📘 "${selectedWord}" saved to your Vocab Book!`);
+}
+
+
+window.addEventListener("load", () => {
+  const saved = JSON.parse(localStorage.getItem("vocabBook")) || [];
+  const vocabList = document.getElementById("vocabList");
+
+  saved.forEach(({ word, definition }) => {
+    if (![...vocabList.children].some(entry => entry.dataset.word === word)) {
+      const entry = document.createElement("div");
+      entry.className = "vocab-entry";
+      entry.dataset.word = word;
+      entry.innerHTML = `<strong>${word}</strong>${definition}`;
+      vocabList.appendChild(entry);
+    }
+  });
+
+  bgMusic.volume = musicVolumeSlider.value;
+  [correctSound, wrongSound, winSound, loseSound].forEach(a => a.volume = sfxVolumeSlider.value);
+
+  startGame();
+});
+
+
+   let hintsUsed = 0;
+const maxHints = 3;
+
+function giveHint() {
+  if (gameOver) return;
+  if (hintsUsed >= maxHints) {
+    addChatMessage("🧠 No more hints! Try guessing.");
+    document.getElementById("hintBtn").disabled = true;
+    return;
+  }
+      const reveal = [...selectedWord].find(ch => ch !== " " && !guessedLetters.has(ch));
+      if (reveal) {
+        guessedLetters.add(reveal);
+        updateWordDisplay();
+        incorrectGuesses++;
+        hintsUsed++;
+    if (hintsUsed >= maxHints) {
+      document.getElementById("hintBtn").disabled = true;
+    }
+    addChatMessage(`🔍 Hint used (${hintsUsed}/${maxHints})!`);
+  
+
+
+        if ([...selectedWord].every(ch => ch === " " || guessedLetters.has(ch))) {
+  gameOver = true;
+  winSound.play();
+  const definition = definitions[selectedWord] || "Definition not found.";
+  showPopup(`🎉 Correct! The word was: ${selectedWord}`, definition);
+} else if (incorrectGuesses >= maxIncorrect) {
+  gameOver = true;
+  loseSound.play();
+  addChatMessage("💀 The word defeats you!");
+  showPopup(`💀 Game Over! The word was: ${selectedWord}`);
+} else {
+  wrongSound.currentTime = 0;
+  wrongSound.play();
+  addChatMessage("🧠 Hint used, but beware—your chances are slipping!");
+}
+      }
+    }
+    let currentWord = null;
+let currentDefinition = null;
+
+function showVocabCard(word, definition) {
+  currentWord = word;
+  currentDefinition = definition;
+
+  const card = document.createElement("div");
+  card.className = "vocab-card";
+  card.innerHTML = `<strong>${word}</strong>${definition}`;
+  chatWindow.appendChild(card);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+
+function saveVocab(word, definition) {
+  if (savedVocab.some(entry => entry.word === word)) return;
+
+  savedVocab.push({ word, definition });
+  alert(`📘 Saved: ${word}`);
+}
+
+function toggleVocabBook() {
+  const modal = document.getElementById("vocabModal");
+  const list = document.getElementById("vocabList");
+  modal.classList.toggle("show");
+
+  if (modal.classList.contains("show")) {
+    list.innerHTML = savedVocab.map(entry =>
+      `<div class="vocab-entry">
+        <strong>${entry.word}</strong>${entry.definition}
+      </div>`).join('') || "<p>No saved vocab yet!</p>";
+  }
+}
+
+    function startGame() {
+  document.getElementById("postPopupButtons").style.display = "none";
+      const level = difficultySelect.value;
+      const availableQs = Object.keys(questions[level]).filter(q => !usedQuestions.includes(q));
+
+      if (availableQs.length === 0) {
+        usedQuestions = [];
+        alert("All questions completed! Starting over.");
+        return startGame();
+      }
+
+      gameOver = false;
+      currentQuestion = availableQs[Math.floor(Math.random() * availableQs.length)];
+      usedQuestions.push(currentQuestion);
+      const answers = questions[level][currentQuestion];
+      selectedWord = answers[Math.floor(Math.random() * answers.length)].toUpperCase();
+      guessedLetters.clear();
+      incorrectGuesses = 0;
+      chatWindow.innerHTML = "";
+      addChatMessage("🧙 A new riddle awaits you...");
+
+      categoryLabel.textContent = `Question: ${currentQuestion}`;
+      updateWordDisplay();
+      buildKeyboard();
+    }
+
+    window.onload = () => {
+      bgMusic.volume = musicVolumeSlider.value;
+      bgMusic.play();
+      sfxVolumeSlider.oninput();
+      startGame();
+    };
+
+    // --- Sliding Menu Logic ---
+const menuBtn = document.getElementById('menuBtn');
+const sideMenu = document.getElementById('sideMenu');
+const closeMenuBtn = document.getElementById('closeMenuBtn');
+const menuOverlay = document.getElementById('menuOverlay');
+
+// Sync menu controls with main controls
+const musicVolumeMenu = document.getElementById('musicVolumeMenu');
+const sfxVolumeMenu = document.getElementById('sfxVolumeMenu');
+const difficultyMenu = document.getElementById('difficultyMenu');
+
+function openMenu() {
+  sideMenu.classList.add('open');
+  menuOverlay.classList.add('show');
+  // Sync menu controls with current values
+  musicVolumeMenu.value = musicVolumeSlider.value;
+  sfxVolumeMenu.value = sfxVolumeSlider.value;
+  difficultyMenu.value = difficultySelect.value;
+}
+function closeMenu() {
+  sideMenu.classList.remove('open');
+  menuOverlay.classList.remove('show');
+}
+menuBtn.onclick = openMenu;
+closeMenuBtn.onclick = closeMenu;
+menuOverlay.onclick = closeMenu;
+
+// Sync changes from menu controls to main controls
+musicVolumeMenu.oninput = function() {
+  musicVolumeSlider.value = this.value;
+  musicVolumeSlider.oninput();
+};
+sfxVolumeMenu.oninput = function() {
+  sfxVolumeSlider.value = this.value;
+  sfxVolumeSlider.oninput();
+};
+difficultyMenu.onchange = function() {
+  difficultySelect.value = this.value;
+  startGame();
+};
+
+// Also sync changes from main controls to menu controls
+musicVolumeSlider.oninput = function() {
+  bgMusic.volume = musicVolumeSlider.value;
+  musicVolumeMenu.value = musicVolumeSlider.value;
+};
+sfxVolumeSlider.oninput = function() {
+  const vol = sfxVolumeSlider.value;
+  [correctSound, wrongSound, winSound, loseSound].forEach(a => a.volume = vol);
+  sfxVolumeMenu.value = sfxVolumeSlider.value;
+};
+difficultySelect.onchange = function() {
+  difficultyMenu.value = difficultySelect.value;
+  startGame();
+};
+function tryAgain() {
+  // Reset state but keep the same question and word
+  gameOver = false;
+  guessedLetters.clear();
+  incorrectGuesses = 0;
+  hintsUsed = 0;
+  document.getElementById("hintBtn").disabled = false;
+  chatWindow.innerHTML = "";
+  addChatMessage("🔄 Try again! You face the same word...");
+  updateWordDisplay();
+  buildKeyboard();
+  document.getElementById("postPopupButtons").style.display = "none";
+  document.getElementById("tryAgainBtn").style.display = "none";
+}
+  </script>
+</body>
+</html>
